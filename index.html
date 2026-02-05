@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你好，焦虑情绪 - 互动科普条漫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(180deg, #fef9f3 0%, #fff5eb 100%);
+            overflow-x: hidden;
+        }
+        
+        .comic-panel {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 3px dashed #e5e7eb;
+        }
+        
+        .speech-bubble {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50px;
+            border-width: 20px 20px 0;
+            border-style: solid;
+            border-color: white transparent;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .alarm-blink {
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+        
+        .gear-spin {
+            animation: spin-slow 4s linear infinite;
+        }
+        
+        .highlight-text {
+            background: linear-gradient(120deg, #fcd34d 0%, #fcd34d 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 88%;
+            padding: 0 4px;
+            font-weight: 700;
+        }
+        
+        .thought-chain {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 500px;
+        }
+        
+        .thought-bubble {
+            background: #f3f4f6;
+            border-radius: 15px;
+            padding: 1rem;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .thought-bubble:hover {
+            transform: translateX(10px);
+            background: #fee2e2;
+        }
+        
+        .thought-bubble::before {
+            content: '→';
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1.5rem;
+        }
+        
+        .thought-bubble:first-child::before {
+            content: '💭';
+        }
+        
+        .exercise-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+            max-width: 350px;
+        }
+        
+        .exercise-card:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        
+        .exercise-card:nth-child(even) {
+            transform: rotate(2deg);
+        }
+        
+        .exercise-card:nth-child(even):hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d1d5db;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: #f59e0b;
+            transform: scale(1.3);
+        }
+        
+        .brain-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .amygdala {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #ef4444;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+        }
+        
+        .chemical-drop {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: drop 2s ease-in infinite;
+        }
+        
+        @keyframes drop {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(100px) scale(0.5); opacity: 0; }
+        }
+        
+        .character {
+            font-size: 4rem;
+            animation: breathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            z-index: 100;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- 进度条 -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- 导航点 -->
+    <div class="scroll-indicator">
+        <div class="dot active" onclick="scrollToPanel(0)"></div>
+        <div class="dot" onclick="scrollToPanel(1)"></div>
+        <div class="dot" onclick="scrollToPanel(2)"></div>
+        <div class="dot" onclick="scrollToPanel(3)"></div>
+        <div class="dot" onclick="scrollToPanel(4)"></div>
+        <div class="dot" onclick="scrollToPanel(5)"></div>
+    </div>
+
+    <!-- 封面页 -->
+    <section class="comic-panel bg-gradient-to-b from-orange-50 to-yellow-50">
+        <div class="text-center max-w-2xl">
+            <div class="character mb-6">😰</div>
+            <h1 class="text-5xl font-black mb-4 text-gray-900 tracking-tight">
+                你好，<span class="text-orange-500">焦虑情绪</span>
+            </h1>
+            <div class="speech-bubble text-lg text-gray-700 leading-relaxed">
+                在快节奏的工作生活中，你是否有过这样的时刻：明明身体没有生病，却感到莫名的心慌、手心出汗，或是大脑像高速旋转的齿轮无法停歇？
+            </div>
+            <p class="mt-8 text-gray-500 animate-bounce">↓ 向下滚动开始探索 ↓</p>
+        </div>
+    </section>
+
+    <!-- 第一幕：焦虑是什么 -->
+    <section class="comic-panel bg-white">
+        <div class="max-w-4xl w-full grid md:grid-cols-2 gap-8 items-center">
+            <div class="order-2 md:order-1">
+                <div class="brain-container mx-auto">
+                    <svg viewBox="0 0 200 200" class="w-full h-full">
+                        <!-- 大脑轮廓 -->
+                        <path d="M100,30 C140,30 170,60 170,100 C170,140 140,170 100,170 C60,170 30,140 30,100 C30,60 60,30 100,30" 
+                              fill="#fce7f3" stroke="#f472b6" stroke-width="3"/>
+                        <!-- 大脑纹理 -->
+                        <path d="M60,80 Q80,60 100,80 T140,80" fill="none" stroke="#f472b6" stroke-width="2" opacity="0.5"/>
+                        <path d="M70,110 Q90,90 110,110 T130,110" fill="none" stroke="#f472b6" stroke-width="2" opacity="0.5"/>
+                    </svg>
+                    <!-- 杏仁核 -->
+                    <div class="amygdala alarm-blink">
+                        🚨<br>杏仁核
+                    </div>
+                    <!-- 化学分子动画 -->
+                    <div class="chemical-drop" style="left: 40%; top: 30%; animation-delay: 0s;"></div>
+                    <div class="chemical-drop" style="left: 60%; top: 40%; animation-delay: 0.5s;"></div>
+                    <div class="chemical-drop" style="left: 50%; top: 20%; animation-delay: 1s;"></div>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 space-y-4">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">一、焦虑：大脑里的<span class="highlight-text">压力报警器</span></h2>
+                <div class="space-y-3 text-gray-700 leading-relaxed">
+                    <p>别慌，它是人类进化数百万年来留下的（现在不太好使的）<span class="font-bold text-orange-600">被动技能</span>。</p>
+                    <p>我们大脑中有一个叫<span class="font-bold">杏仁核（Amygdala）</span>的结构，它就像一个<span class="text-red-500 font-bold">全天候运行的压力报警器</span>。</p>
+                    <p>当它感知到压力时，会迅速激活交感神经系统并释放大量肾上腺素：</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4 text-sm bg-yellow-50 p-4 rounded-lg">
+                        <li>💓 心跳加快</li>
+                        <li>💨 呼吸变浅</li>
+                        <li>👁️ 瞳孔放大</li>
+                        <li>💪 肌肉紧绷</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第二幕：进化 vs 现代 -->
+    <section class="comic-panel bg-gradient-to-b from-blue-50 to-indigo-50">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold text-center mb-8">远古时代 🆚 现代办公室</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 远古时代 -->
+                <div class="bg-white rounded-3xl p-6 shadow-lg transform -rotate-1 hover:rotate-0 transition-transform">
+                    <div class="text-6xl text-center mb-4">🦁</div>
+                    <h3 class="text-xl font-bold text-center mb-3 text-green-600">远古时代</h3>
+                    <p class="text-gray-600 text-center mb-4">面对天敌和猎物</p>
+                    <div class="bg-green-100 rounded-xl p-4 text-sm">
+                        <p class="font-bold mb-2">✅ 生存优势：</p>
+                        <p>迅速进入<span class="font-bold">战斗或逃跑</span>状态，大大提高生存率！</p>
+                    </div>
+                </div>
+                
+                <!-- 现代办公室 -->
+                <div class="bg-white rounded-3xl p-6 shadow-lg transform rotate-1 hover:rotate-0 transition-transform">
+                    <div class="text-6xl text-center mb-4">💼</div>
+                    <h3 class="text-xl font-bold text-center mb-3 text-blue-600">现代办公室</h3>
+                    <p class="text-gray-600 text-center mb-4">面对老板和DDL</p>
+                    <div class="bg-red-100 rounded-xl p-4 text-sm">
+                        <p class="font-bold mb-2">❌ 尴尬处境：</p>
+                        <p>既不能殴打老板同事<span class="text-xs text-gray-500">（并非教唆）</span>，也没法逃离工位...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <div class="inline-block bg-yellow-200 rounded-full px-6 py-3 font-bold text-gray-800 animate-pulse">
+                    💡 结果：化学物质在体内积压，产生紧绷感
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第三幕：为什么焦虑 -->
+    <section class="comic-panel bg-white">
+        <div class="max-w-3xl w-full">
+            <h2 class="text-3xl font-bold mb-2 text-center">二、为什么我们会感到焦虑？</h2>
+            <p class="text-center text-gray-500 mb-8">约有<span class="text-2xl font-bold text-orange-500">30%</span>的人在一生中的某个阶段会经历明显的焦虑干扰</p>
+            
+            <div class="grid gap-6">
+                <div class="flex items-start space-x-4 bg-purple-50 p-4 rounded-2xl">
+                    <div class="text-4xl">🧬</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-purple-700">1. 生物学因素</h3>
+                        <p class="text-gray-700">遗传基因决定了每个人的"报警器"灵敏度不同。</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4 bg-blue-50 p-4 rounded-2xl">
+                    <div class="text-4xl">🏢</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-blue-700">2. 环境压力</h3>
+                        <p class="text-gray-700">工作学习压力、人际关系、信息过载、不确定的未来预期。</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4 bg-red-50 p-4 rounded-2xl">
+                    <div class="text-4xl">🧠</div>
+                    <div>
+                        <h3 class="font-bold text-lg text-red-700">3. 认知模式</h3>
+                        <p class="text-gray-700 mb-3">将小事的不确定性放大为灾难化结果：</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 思维链条可视化 -->
+            <div class="mt-8 thought-chain mx-auto">
+                <div class="thought-bubble bg-white border-2 border-gray-200">
+                    <span class="text-2xl">🍞</span> 今天没吃早饭，胃有点不舒服
+                </div>
+                <div class="thought-bubble bg-red-50 border-2 border-red-200">
+                    <span class="text-gray-400 text-sm">可能是</span> <span class="text-red-600 font-bold">胃穿孔腹膜炎</span>
+                </div>
+                <div class="thought-bubble bg-red-100 border-2 border-red-300">
+                    或许会<span class="font-bold">休克多器官衰竭</span>
+                </div>
+                <div class="thought-bubble bg-red-200 border-2 border-red-400">
+                    花光积蓄 → 被迫失业 → 悲惨一生
+                </div>
+                <div class="thought-bubble bg-red-600 text-white font-bold text-xl text-center">
+                    我完蛋了！😱 超级无敌焦虑
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第四幕：运动解决方案 -->
+    <section class="comic-panel bg-gradient-to-b from-green-50 to-emerald-50">
+        <div class="max-w-5xl w-full">
+            <h2 class="text-3xl font-bold mb-2 text-center">三、运动：<span class="highlight-text">天然的焦虑灭火器</span></h2>
+            <p class="text-center text-gray-600 mb-8">身体的介入往往比"想开点"这类空话有效得多</p>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-12">
+                <div class="exercise-card bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                    <div class="text-4xl mb-2">🧪</div>
+                    <h3 class="font-bold text-lg mb-2">神经递质大扫除</h3>
+                    <p class="text-sm opacity-90">产生多巴胺、血清素和内啡肽，中和皮质醇，就像为大脑洗了个澡。</p>
+                </div>
+                
+                <div class="exercise-card bg-gradient-to-br from-purple-400 to-purple-600 text-white">
+                    <div class="text-4xl mb-2">💪</div>
+                    <h3 class="font-bold text-lg mb-2">增强肌肉耐受</h3>
+                    <p class="text-sm opacity-90">模拟焦虑时的生理反应，让大脑学会区分："心跳快是因为我在努力，而不是有危险。"</p>
+                </div>
+                
+                <div class="exercise-card bg-gradient-to-br from-orange-400 to-orange-600 text-white">
+                    <div class="text-4xl mb-2">✅</div>
+                    <h3 class="font-bold text-lg mb-2">提供结束信号</h3>
+                    <p class="text-sm opacity-90">焦虑是"准备行动"状态，而运动本身就是行动。完成运动=告诉大脑："应对已发生，可以收尾了。"</p>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mb-6">🏃‍♀️ 运动方案推荐</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-lg text-center transform hover:scale-105 transition-transform">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">🏃</div>
+                    <h4 class="font-bold text-blue-700 mb-2">有氧运动（首选）</h4>
+                    <p class="text-sm text-gray-600">快走、慢跑、游泳</p>
+                    <div class="mt-3 bg-blue-50 rounded-lg p-2 text-xs font-mono">
+                        每周3-5次<br>每次30分钟
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg text-center transform hover:scale-105 transition-transform">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">🏋️</div>
+                    <h4 class="font-bold text-purple-700 mb-2">力量训练</h4>
+                    <p class="text-sm text-gray-600">举重或抗阻练习</p>
+                    <div class="mt-3 bg-purple-50 rounded-lg p-2 text-xs">
+                        提升自我效能感<br>增强掌控力
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg text-center transform hover:scale-105 transition-transform">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">🧘</div>
+                    <h4 class="font-bold text-green-700 mb-2">正念律动</h4>
+                    <p class="text-sm text-gray-600">瑜伽或太极</p>
+                    <div class="mt-3 bg-green-50 rounded-lg p-2 text-xs">
+                        结合深呼吸<br>激活迷走神经
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第五幕：日常预防 -->
+    <section class="comic-panel bg-white">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-3xl font-bold mb-8 text-center">四、日常预防与自我调适</h2>
+            <p class="text-center text-gray-600 mb-10">建立心理弹性的四个关键</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="flex items-center space-x-4 bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="text-5xl">🔍</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">1. 限制过度搜索</h3>
+                        <p class="text-sm text-gray-600">身体的不适感会随情绪起伏，频繁查阅医学资料会强化杏仁核的恐惧信号。</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4 bg-indigo-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="text-5xl">😴</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1 text-indigo-700">2. 规律作息</h3>
+                        <p class="text-sm text-gray-600">睡眠不足是焦虑最强大的助燃剂，会让大脑误以为自己处在被天敌追逐的危险之中。</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4 bg-yellow-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="text-5xl">🎲</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1 text-yellow-700">3. 接受不确定性</h3>
+                        <p class="text-sm text-gray-600">尝试接受生活中总有无法控制的部分，将精力集中在"我当下能做的一件小事"上。</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4 bg-pink-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="text-5xl">💬</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1 text-pink-700">4. 交流表达</h3>
+                        <p class="text-sm text-gray-600">与信任的朋友或家人交流感受，情绪表达本身就有疗愈作用。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 结语 -->
+    <section class="comic-panel bg-gradient-to-b from-orange-100 to-yellow-100">
+        <div class="text-center max-w-2xl">
+            <div class="text-6xl mb-6">🌅</div>
+            <h2 class="text-3xl font-bold mb-6 text-gray-900">结语</h2>
+            <div class="bg-white rounded-3xl p-8 shadow-xl mb-8">
+                <p class="text-xl leading-relaxed text-gray-800 mb-4">
+                    <span class="text-2xl font-bold text-orange-500">焦虑不是敌人</span>，它是身体在提醒你：
+                </p>
+                <p class="text-lg text-gray-600 italic">
+                    "最近有点累了，关注一下自己吧。"
+                </p>
+            </div>
+            <div class="space-y-2 text-gray-700">
+                <p>如果你感到紧绷，请不要慌张，更不要急于对号入座。</p>
+                <p class="font-bold text-lg">站起来，去跑跑步、打打球、流流汗。</p>
+                <p>给你的大脑一点时间，让那些焦虑在汗水中消散。 💦✨</p>
+            </div>
+            <button onclick="scrollToPanel(0)" class="mt-8 px-8 py-3 bg-orange-500 text-white rounded-full font-bold hover:bg-orange-600 transition-colors shadow-lg">
+                重新阅读 ↺
+            </button>
+        </div>
+    </section>
+
+    <script>
+        // 滚动进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+            
+            // 更新导航点
+            const panels = document.querySelectorAll('.comic-panel');
+            const scrollPosition = window.scrollY + window.innerHeight / 2;
+            
+            panels.forEach((panel, index) => {
+                const panelTop = panel.offsetTop;
+                const panelBottom = panelTop + panel.offsetHeight;
+                
+                if (scrollPosition >= panelTop && scrollPosition < panelBottom) {
+                    document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+                    document.querySelectorAll('.dot')[index]?.classList.add('active');
+                }
+            });
+        });
+
+        // 平滑滚动到指定面板
+        function scrollToPanel(index) {
+            const panels = document.querySelectorAll('.comic-panel');
+            if (panels[index]) {
+                panels[index].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 思维链条交互
+        document.querySelectorAll('.thought-bubble').forEach((bubble, index) => {
+            bubble.addEventListener('click', () => {
+                // 添加震动效果
+                bubble.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    bubble.style.animation = '';
+                }, 500);
+                
+                // 高亮后续所有气泡
+                for (let i = index + 1; i < document.querySelectorAll('.thought-bubble').length; i++) {
+                    setTimeout(() => {
+                        document.querySelectorAll('.thought-bubble')[i].style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            document.querySelectorAll('.thought-bubble')[i].style.transform = '';
+                        }, 200);
+                    }, i * 100);
+                }
+            });
+        });
+
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
